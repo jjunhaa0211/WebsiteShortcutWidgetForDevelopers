@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  WebsiteMenuBar
+//  MuenBarYourApp
 //
 //  Created by 박준하 on 10/31/23.
 //
