@@ -21,6 +21,9 @@ struct BarHajApp: App {
     var body: some Scene {
         
         if #available(macOS 13.0, *) {
+            WindowGroup {
+                ContentView()
+            }
             MenuBarExtra(
                 "userName", image: "MenuBarIcon")
             {
