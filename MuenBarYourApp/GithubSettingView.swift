@@ -1,12 +1,6 @@
-//
-//  MenuBarSettingView.swift
-//  MuenBarYourApp
-//
-//  Created by 박준하 on 11/1/23.
-//
 import SwiftUI
 
-struct MenuBarSettingView: View {
+struct GithubSettingView: View {
     @AppStorage("userName") private var userName: String = "YourUserName"
     @AppStorage("gitHubURL") private var gitHubURL: String = "https://github.com/jjunhaa0211"
 
@@ -67,6 +61,6 @@ struct MenuBarSettingView: View {
 
 struct MenuBarSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuBarSettingView()
+        GithubSettingView()
     }
 }

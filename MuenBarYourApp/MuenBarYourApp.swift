@@ -1,21 +1,16 @@
-//
-//  MuenBarYourAppApp.swift
-//  MuenBarYourApp
-//
-//  Created by 박준하 on 10/31/23.
-//
-
 import SwiftUI
 
 enum NavigationItem {
     case links
     case settings
+    case blog
 }
 
 @main
 struct BarHajApp: App {
     @AppStorage("userName") private var userName = "YourUserName"
     @AppStorage("gitHubURL") private var gitHubURL = "https://github.com/jjunhaa0211"
+    @AppStorage("blogURL") private var blogURL = "https://goodjunha060211.tistory.com"
 
     @State private var selection: NavigationItem? = .links
 
@@ -32,33 +27,24 @@ struct BarHajApp: App {
                         }
 
                         NavigationLink(
-                            destination: MenuBarSettingView(),
+                            destination: GithubSettingView(),
                             tag: NavigationItem.settings,
                             selection: $selection
                         ) {
-                            Label("Menu Bar Settings", systemImage: "gearshape")
+                            Label("UserName or Github Setting", systemImage: "gearshape")
+                        }
+                        
+                        NavigationLink(
+                            destination: BlogSettingView(),
+                            tag: NavigationItem.blog,
+                            selection: $selection
+                        ) {
+                            Label("Blog Setting", systemImage: "chart.bar.doc.horizontal")
                         }
                     }
                     .listStyle(SidebarListStyle())
                 }
                 .navigationTitle("Menu Bar Your App")
-            }
-            .commands {
-                CommandGroup(replacing: CommandGroupPlacement.appInfo) {
-                    Button("GitHub - \(userName)") {
-                        if let url = URL(string: gitHubURL) {
-                            NSWorkspace.shared.open(url)
-                        }
-                    }
-                    .keyboardShortcut("1")
-                }
-
-                CommandGroup(after: CommandGroupPlacement.appInfo) {
-                    Button("Quit") {
-                        NSApplication.shared.terminate(nil)
-                    }
-                    .keyboardShortcut("q")
-                }
             }
         
         MenuBarExtra("userName", image: "MenuBarIcon") {
@@ -67,6 +53,12 @@ struct BarHajApp: App {
                     NSWorkspace.shared.open(url)
                 }
             }.keyboardShortcut("1")
+            
+            Button("Blog") {
+                if let url = URL(string: blogURL) {
+                    NSWorkspace.shared.open(url)
+                }
+            }.keyboardShortcut("2")
 
             Divider()
 

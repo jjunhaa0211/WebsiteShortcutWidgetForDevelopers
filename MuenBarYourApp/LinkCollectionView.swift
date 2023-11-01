@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct LinkCollectionView: View {
-    @State private var userName: String = ""
-    @State private var gitHubURL: String = ""
+    @State private var titleName: String = ""
+    @State private var websiteURL: String = ""
     @State private var menuBarItems: [(name: String, url: String)] = []
     @State private var showingAlert = false
     
@@ -20,10 +20,10 @@ struct LinkCollectionView: View {
         NavigationView {
             List {
                 Section(header: Text("Add to MenuBar")) {
-                    TextField("Enter your name", text: $userName)
+                    TextField("Enter your title name", text: $titleName)
                         .textFieldStyle(.roundedBorder)
                     
-                    TextField("Enter GitHub URL", text: $gitHubURL)
+                    TextField("Enter Website URL", text: $websiteURL)
                         .textFieldStyle(.roundedBorder)
                     
                     Button(action: {
@@ -31,7 +31,7 @@ struct LinkCollectionView: View {
                     }) {
                         Text("Add Link")
                     }
-                    .disabled(userName.isEmpty || gitHubURL.isEmpty)
+                    .disabled(titleName.isEmpty || websiteURL.isEmpty)
                 }
                 
                 Section(header: Text("Links in MenuBar")) {
@@ -46,11 +46,11 @@ struct LinkCollectionView: View {
     }
     
     func addMenuBarItem() {
-        menuBarItems.append((name: userName, url: gitHubURL))
+        menuBarItems.append((name: titleName, url: websiteURL))
         updateMenuBarItems(menuBarItems)
         saveMenuBarItems()
-        userName = ""
-        gitHubURL = ""
+        titleName = ""
+        websiteURL = ""
     }
     
     func saveMenuBarItems() {
@@ -80,7 +80,7 @@ struct LinkDetailView: View {
     
     var body: some View {
         WebView(url: url)
-            .navigationTitle("GitHub Link")
+            .navigationTitle("webSite Link")
     }
 }
 
