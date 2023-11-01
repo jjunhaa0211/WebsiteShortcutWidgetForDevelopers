@@ -9,32 +9,64 @@ import SwiftUI
 struct MenuBarSettingView: View {
     @AppStorage("userName") private var userName: String = "YourUserName"
     @AppStorage("gitHubURL") private var gitHubURL: String = "https://github.com/jjunhaa0211"
-    
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            
-            TextField("Enter your name", text: $userName)
-                .padding()
-                .textFieldStyle(.roundedBorder)
-            
-            TextField("Enter GitHub URL", text: $gitHubURL)
-                .padding()
-                .textFieldStyle(.roundedBorder)
-            
-            Button("Update MenuBar") {
-                if let appDelegate = NSApp.delegate as? AppDelegate {
-                    let updatedItems = [(name: "GitHub", url: gitHubURL)]
-                    appDelegate.updateMenuBarItems(updatedItems)
+        NavigationView {
+            Form {
+                Section() {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Image(systemName: "globe")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                            .foregroundColor(.blue)
+                        
+                        Text("Menu Bar Settings")
+                            .font(.title)
+                            .fontWeight(.bold)
+                    }
+                    
+                    TextField("Your Name", text: $userName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .disableAutocorrection(true)
+                        .padding(.vertical, 10)
+                    
+                    TextField("GitHub URL", text: $gitHubURL)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .disableAutocorrection(true)
+                        .padding(.vertical, 10)
                 }
+                
+                Section {
+                    Button(action: {
+                        updateMenuBar()
+                    }) {
+                        Text("Update MenuBar")
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
+                .padding(.vertical, 20)
             }
+            .navigationTitle("MenuBar Settings")
+            .frame(minWidth: 600)
+            .padding(20)
         }
-        .padding()
+    }
+    
+    func updateMenuBar() {
+        if let appDelegate = NSApp.delegate as? AppDelegate {
+            let updatedItems = [(name: userName, url: gitHubURL)]
+            appDelegate.updateMenuBarItems(updatedItems)
+        }
     }
 }
 
-#Preview {
-    MenuBarSettingView()
+struct MenuBarSettingView_Previews: PreviewProvider {
+    static var previews: some View {
+        MenuBarSettingView()
+    }
 }

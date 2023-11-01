@@ -7,18 +7,60 @@
 
 import SwiftUI
 
+enum NavigationItem {
+    case links
+    case settings
+}
+
 @main
 struct BarHajApp: App {
     @AppStorage("userName") private var userName = "YourUserName"
     @AppStorage("gitHubURL") private var gitHubURL = "https://github.com/jjunhaa0211"
 
+    @State private var selection: NavigationItem? = .links
+
     var body: some Scene {
-        WindowGroup {
-            HStack {
-                LinkCollectionView()
-                MenuBarSettingView()
+            WindowGroup {
+                NavigationView {
+                    List {
+                        NavigationLink(
+                            destination: LinkCollectionView(),
+                            tag: NavigationItem.links,
+                            selection: $selection
+                        ) {
+                            Label("Manage Links", systemImage: "link")
+                        }
+
+                        NavigationLink(
+                            destination: MenuBarSettingView(),
+                            tag: NavigationItem.settings,
+                            selection: $selection
+                        ) {
+                            Label("Menu Bar Settings", systemImage: "gearshape")
+                        }
+                    }
+                    .listStyle(SidebarListStyle())
+                }
+                .navigationTitle("Menu Bar Your App")
             }
-        }
+            .commands {
+                CommandGroup(replacing: CommandGroupPlacement.appInfo) {
+                    Button("GitHub - \(userName)") {
+                        if let url = URL(string: gitHubURL) {
+                            NSWorkspace.shared.open(url)
+                        }
+                    }
+                    .keyboardShortcut("1")
+                }
+
+                CommandGroup(after: CommandGroupPlacement.appInfo) {
+                    Button("Quit") {
+                        NSApplication.shared.terminate(nil)
+                    }
+                    .keyboardShortcut("q")
+                }
+            }
+        
         MenuBarExtra("userName", image: "MenuBarIcon") {
             Button("GitHub - \(userName)") {
                 if let url = URL(string: gitHubURL) {
@@ -55,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
-
+        
         for item in menuBarItems {
             let menuItem = NSMenuItem(title: item.name, action: #selector(openUrl(_:)), keyEquivalent: "")
             menuItem.representedObject = item.url

@@ -1,9 +1,3 @@
-//
-//  ContentView.swift
-//  MuenBarYourApp
-//
-//  Created by 박준하 on 10/31/23.
-//
 import SwiftUI
 
 struct LinkCollectionView: View {
@@ -23,44 +17,42 @@ struct LinkCollectionView: View {
     }
 
     var body: some View {
-        VStack {
-            TextField("Enter your name", text: $userName)
-                .padding()
-                .textFieldStyle(.roundedBorder)
-
-            TextField("Enter GitHub URL", text: $gitHubURL)
-                .padding()
-                .textFieldStyle(.roundedBorder)
-
-            Button("Add to MenuBar") {
-                if userName.isEmpty || gitHubURL.isEmpty {
-                    showingAlert = true
-                } else {
-                    menuBarItems.append((name: userName, url: gitHubURL))
-                    updateMenuBarItems(menuBarItems)
-                    saveMenuBarItems()
-                    userName = ""
-                    gitHubURL = ""
+        NavigationView {
+            List {
+                Section(header: Text("Add to MenuBar")) {
+                    TextField("Enter your name", text: $userName)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    TextField("Enter GitHub URL", text: $gitHubURL)
+                        .textFieldStyle(.roundedBorder)
+                    
+                    Button(action: {
+                        addMenuBarItem()
+                    }) {
+                        Text("Add Link")
+                    }
+                    .disabled(userName.isEmpty || gitHubURL.isEmpty)
+                }
+                
+                Section(header: Text("Links in MenuBar")) {
+                    ForEach(menuBarItems.indices, id: \.self) { index in
+                        LinkRowView(item: menuBarItems[index])
+                    }
                 }
             }
-            .alert(isPresented: $showingAlert) {
-                Alert(title: Text("Error"), message: Text("Please enter both your name and GitHub URL"), dismissButton: .default(Text("OK"))
-                )
-            }
-        }
-        .padding()
-
-        List(menuBarItems.indices, id: \.self) { index in
-            Button(action: {
-                if let urlObj = URL(string: menuBarItems[index].url) {
-                    NSWorkspace.shared.open(urlObj)
-                }
-            }) {
-                Text(menuBarItems[index].name)
-            }
+            .navigationTitle("Menu Links")
+            .frame(minWidth: 600)
         }
     }
-
+    
+    func addMenuBarItem() {
+        menuBarItems.append((name: userName, url: gitHubURL))
+        updateMenuBarItems(menuBarItems)
+        saveMenuBarItems()
+        userName = ""
+        gitHubURL = ""
+    }
+    
     func saveMenuBarItems() {
         let itemsToSave = menuBarItems.map { item in
             ["name": item.name, "url": item.url]
@@ -73,6 +65,47 @@ struct LinkCollectionView: View {
     }
 }
 
-#Preview {
-    LinkCollectionView()
+struct LinkRowView: View {
+    let item: (name: String, url: String)
+    
+    var body: some View {
+        NavigationLink(destination: LinkDetailView(url: item.url)) {
+            Text(item.name)
+        }
+    }
+}
+
+struct LinkDetailView: View {
+    let url: String
+    
+    var body: some View {
+        WebView(url: url)
+            .navigationTitle("GitHub Link")
+    }
+}
+
+struct WebView: View {
+    let url: String
+    
+    var body: some View {
+        VStack {
+            Text("Website: \(url)")
+                .font(.title)
+            Button("Open in Browser") {
+                if let urlObj = URL(string: url) {
+                    NSWorkspace.shared.open(urlObj)
+                }
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(Color.white)
+            .cornerRadius(8.0)
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        LinkCollectionView()
+    }
 }
